@@ -1,4 +1,5 @@
 # employeemanager
+College project built in Spring Boot
 
 ## Project setup
 ```
