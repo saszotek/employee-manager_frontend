@@ -89,7 +89,6 @@ export default {
   },
   data () {
     return {
-      test: null,
       id: 0,
       employee: null,
       departments: [],
