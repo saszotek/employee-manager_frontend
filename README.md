@@ -1,4 +1,4 @@
-# employeemanager
+# EmployeeManager_VueJS_frontend
 College project built in Spring Boot
 
 ## Project setup
