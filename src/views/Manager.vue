@@ -2,6 +2,11 @@
 <!-- <Navbar/> -->
 <NavbarLogged/>
 <div class="manager-container">
+  <div class="search-container">
+    <div class="input-wrapper">
+      <input type="text" placeholder="Search by Surname" v-model="searchSurname">
+    </div>
+  </div>
   <div class="manager-box">
     <div class="manager-tables">
       <div class="manager-title-container">
@@ -31,7 +36,7 @@
           </div>
           <div class="record-buttons"></div>
         </div>
-        <div class="record" v-for="employee in employees" :key="employee.id">
+        <div class="record" v-for="employee in filteredEmployees" :key="employee.id">
           <div class="border-half"></div>
           <div class="record-info">
             <div>
@@ -55,7 +60,6 @@
               <router-link :to="{name: 'Details', params: {id: employee.id}}"><span>Details</span></router-link>
             </div>
             <div>
-              <!-- <router-link to="/edit"><span>Edit</span></router-link> -->
               <router-link :to="{name: 'Edit', params: {id: employee.id}}"><span>Edit</span></router-link>
             </div>
             <div>
@@ -82,7 +86,8 @@ export default {
   },
   data () {
     return {
-      employees: []
+      employees: [],
+      searchSurname: ''
     }
   },
   methods: {
@@ -90,12 +95,12 @@ export default {
       await http.get('/employee/all')
         .then((response) => {
           this.employees = response.data
+          console.log(response)
         })
         .catch((error) => {
           console.log(error)
         })
     },
-
     async deleteEmployee (id) {
       await http.delete('/employee/delete/' + id)
         .then((response) => {
@@ -109,22 +114,29 @@ export default {
   },
   created () {
     this.getEmployees()
+  },
+  computed: {
+    filteredEmployees () {
+      return this.employees.filter(employee => employee.surname.includes(this.searchSurname))
+    }
   }
 }
 </script>
 
 <style scoped>
 .manager-container {
+  position: relative;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
+  margin-top: 120px;
   background-color: #f5f5f5;
 }
 
 .manager-box {
-  margin-top: 120px;
   border: 1px solid black;
   border-radius: 7px;
   box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
@@ -253,5 +265,31 @@ a:hover, button:hover{
 
 a:hover:after, button:hover:after{
   width: 100%;
+}
+
+.search-container {
+  position: absolute;
+  top: 30px;
+  left: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.input-wrapper {
+  width: 250px;
+}
+
+.input-wrapper input {
+  height: 30px;
+  width: 100%;
+  widows: 400px;
+  padding: 15px;
+  border-bottom: 2px solid #000;
+  border-left: 2px solid #000;
+  border-top: 2px solid #000;
+  border-right: 2px solid #000;
+  border-radius: 7px;
+  font-size: 15px;
 }
 </style>
