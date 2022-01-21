@@ -117,7 +117,7 @@ export default {
   },
   computed: {
     filteredEmployees () {
-      return this.employees.filter(employee => employee.surname.includes(this.searchSurname))
+      return this.employees.filter(employee => employee.surname.toLowerCase().includes(this.searchSurname.toLowerCase()))
     }
   }
 }
