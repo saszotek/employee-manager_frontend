@@ -5,9 +5,18 @@
   <div class="search-container">
     <div class="input-wrapper">
       <input type="text" placeholder="Search by Surname" v-model="searchSurname">
+      <button class="search-button" @click="filteredSurname();"><span>Search</span></button>
     </div>
   </div>
   <div class="manager-box">
+    <div class="pagination-container">
+      <div class="pagination-wrapper">
+        <button class="pagination-button" @click="previousPage();">Previous</button>
+      </div>
+      <div class="pagination-wrapper">
+        <button class="pagination-button" @click="nextPage();">Next</button>
+      </div>
+    </div>
     <div class="manager-tables">
       <div class="manager-title-container">
         <div class="manager-title">
@@ -36,7 +45,7 @@
           </div>
           <div class="record-buttons"></div>
         </div>
-        <div class="record" v-for="employee in filteredEmployees" :key="employee.id">
+        <div class="record" v-for="employee in employees" :key="employee.id">
           <div class="border-half"></div>
           <div class="record-info">
             <div>
@@ -87,15 +96,20 @@ export default {
   data () {
     return {
       employees: [],
-      searchSurname: ''
+      employeesPaginated: [],
+      searchSurname: '',
+      currentPage: 0,
+      totalPages: null
     }
   },
   methods: {
     async getEmployees () {
-      await http.get('/employee/all')
+      await http.get('/employee/all?page=' + this.currentPage + '&surname=' + this.searchSurname)
         .then((response) => {
-          this.employees = response.data
+          this.employeesPaginated = response.data
           console.log(response)
+          this.totalPages = this.employeesPaginated.totalPages
+          this.employees = this.employeesPaginated.employees
         })
         .catch((error) => {
           console.log(error)
@@ -110,15 +124,30 @@ export default {
         .catch((error) => {
           console.log(error)
         })
+    },
+    nextPage () {
+      if (this.currentPage === this.totalPages - 1) {
+        this.getEmployees()
+      } else {
+        this.currentPage++
+        this.getEmployees()
+      }
+    },
+    previousPage () {
+      if (this.currentPage === 0) {
+        this.getEmployees()
+      } else {
+        this.currentPage--
+        this.getEmployees()
+      }
+    },
+    filteredSurname () {
+      this.currentPage = 0
+      this.getEmployees()
     }
   },
   created () {
     this.getEmployees()
-  },
-  computed: {
-    filteredEmployees () {
-      return this.employees.filter(employee => employee.surname.toLowerCase().includes(this.searchSurname.toLowerCase()))
-    }
   }
 }
 </script>
@@ -137,6 +166,7 @@ export default {
 }
 
 .manager-box {
+  position: relative;
   border: 1px solid black;
   border-radius: 7px;
   box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
@@ -277,7 +307,8 @@ a:hover:after, button:hover:after{
 }
 
 .input-wrapper {
-  width: 250px;
+  display: flex;
+  width: 300px;
 }
 
 .input-wrapper input {
@@ -288,8 +319,55 @@ a:hover:after, button:hover:after{
   border-bottom: 2px solid #000;
   border-left: 2px solid #000;
   border-top: 2px solid #000;
-  border-right: 2px solid #000;
-  border-radius: 7px;
+  border-right: 0;
+  border-radius: 7px 0 0 7px;
   font-size: 15px;
+}
+
+.input-wrapper input:focus {
+  outline: none;
+}
+
+.search-button {
+  width: 150px;
+  height: 34px;
+  border-bottom: 2px solid #000;
+  border-left: 1px solid #000;
+  border-top: 2px solid #000;
+  border-right: 2px solid #000;
+  border-radius: 0 7px 7px 0;
+}
+
+.pagination-container {
+  position: absolute;
+  bottom: -70px;
+  left: calc(50% - 105px);
+  display: flex;
+  justify-content: space-between;
+  width: 210px;
+}
+
+.pagination-button {
+  border-radius: 7px;
+}
+
+.pagination-button:after{
+  position: absolute;
+  content: "";
+  top: 0;
+  left: 0;
+  width: 0;
+  height: 100%;
+  background: none;
+  transition: all .35s;
+}
+
+.pagination-button:hover{
+  color: #000;
+  cursor: pointer;
+}
+
+.pagination-button:hover:after{
+  width: 100%;
 }
 </style>
