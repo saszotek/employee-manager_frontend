@@ -126,17 +126,13 @@ export default {
         })
     },
     nextPage () {
-      if (this.currentPage === this.totalPages - 1) {
-        this.getEmployees()
-      } else {
+      if (!(this.currentPage === this.totalPages - 1)) {
         this.currentPage++
         this.getEmployees()
       }
     },
     previousPage () {
-      if (this.currentPage === 0) {
-        this.getEmployees()
-      } else {
+      if (!(this.currentPage === 0)) {
         this.currentPage--
         this.getEmployees()
       }
