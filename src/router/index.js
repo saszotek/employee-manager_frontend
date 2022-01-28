@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import Home from '../views/Home.vue'
-import Manager from '../views/Manager.vue'
-import LoginPage from '../views/LoginPage.vue'
-import SignupPage from '../views/SignupPage.vue'
-import Details from '../views/Details.vue'
-import Edit from '../views/Edit.vue'
+const Manager = () => import('../views/Manager.vue')
+const LoginPage = () => import('../views/LoginPage.vue')
+const SignupPage = () => import('../views/SignupPage.vue')
+const Details = () => import('../views/Details.vue')
+const Edit = () => import('../views/Edit.vue')
 
 const routes = [
   {

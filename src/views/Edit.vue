@@ -1,5 +1,5 @@
 <template>
-<NavbarLogged/>
+<Navbar/>
 <div class="details-container">
     <form @submit.prevent="submitForm">
         <div class="details-box">
@@ -79,13 +79,13 @@
 </template>
 
 <script>
-import NavbarLogged from '../components/NavbarLogged.vue'
+import Navbar from '../components/Navbar.vue'
 import http from '../http-common.js'
 
 export default {
   name: 'Edit',
   components: {
-    NavbarLogged
+    Navbar
   },
   data () {
     return {

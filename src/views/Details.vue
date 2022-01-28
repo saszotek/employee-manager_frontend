@@ -1,5 +1,5 @@
 <template>
-<NavbarLogged/>
+<Navbar/>
 <div class="details-container">
     <div class="details-box">
         <div class="buttons-wrapping">
@@ -67,13 +67,13 @@
 </template>
 
 <script>
-import NavbarLogged from '../components/NavbarLogged.vue'
+import Navbar from '../components/Navbar.vue'
 import http from '../http-common.js'
 
 export default {
   name: 'Details',
   components: {
-    NavbarLogged
+    Navbar
   },
   data () {
     return {

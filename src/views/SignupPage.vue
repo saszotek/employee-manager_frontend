@@ -2,46 +2,34 @@
 <Navbar/>
 <div class="login-container">
   <div class="login-box">
+    <div class="login-box-title">Registration</div>
     <div class="login-form">
-      <form @submit.prevent="submitForm">
-        <div>
-          <label for="name">Name</label>
-          <input type="text" id="name" v-model="formLogin.name"/>
+      <Form @submit="submitForm" :validation-schema="schema">
+        <div v-if="!successful">
+          <div>
+            <label for="username">Username</label>
+            <Field name="username" type="text"/>
+            <div class="error-message">
+              <ErrorMessage name="username"/>
+            </div>
+          </div>
+          <div>
+            <label for="password">Password</label>
+            <Field name="password" type="password"/>
+            <div class="error-message">
+              <ErrorMessage name="password"/>
+            </div>
+          </div>
+          <div>
+            <button :disabled="loading">Sign up</button>
+          </div>
         </div>
         <div>
-          <label for="login">Login</label>
-          <input type="text" id="login" v-model="formLogin.login"/>
+          <div v-if="message" class="message">
+            {{message}}
+          </div>
         </div>
-        <div>
-          <label for="password">Password</label>
-          <input type="password" id="password" v-model="formLogin.password"/>
-        </div>
-        <div>
-          <label for="email">Email</label>
-          <input type="text" id="email" v-model="formLogin.email"/>
-        </div>
-        <div>
-          <label for="phone">Phone</label>
-          <input type="text" id="phone" v-model="formLogin.phone"/>
-        </div>
-        <div>
-          <label for="departmentId">TRZEBA ZROBIC DEPARTMENT</label>
-          <select id="departmentId" v-model="formLogin.departmentId">
-            <option value="department2137">department2137</option>
-            <option value="department3721">department3721</option>
-          </select>
-        </div>
-        <div>
-          <label for="titleId">TRZEBA ZROBIC TITLE</label>
-          <select id="titleId" v-model="formLogin.titleId">
-            <option value="titleDupaStasia">titleDupaStasia</option>
-            <option value="titlePierdziJasia">titlePierdziJasia</option>
-          </select>
-        </div>
-        <div>
-          <button>Sign up</button>
-        </div>
-      </form>
+      </Form>
     </div>
   </div>
 </div>
@@ -49,23 +37,71 @@
 
 <script>
 import Navbar from '../components/Navbar.vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import * as yup from 'yup'
 
 export default {
   name: 'SignupPage',
   components: {
-    Navbar
+    Navbar,
+    Form,
+    Field,
+    ErrorMessage
   },
   data () {
+    const schema = yup.object().shape({
+      username: yup
+        .string()
+        .required('Username is required!')
+        .min(3, 'Must be at least 3 characters!')
+        .max(20, 'Must be maximum 20 characters!'),
+      password: yup
+        .string()
+        .required('Password is required!')
+        .min(6, 'Must be at least 6 characters!')
+        .max(20, 'Must be maximum 20 characters!')
+    })
+
     return {
-      formLogin: {
-        login: '',
-        password: '',
-        name: '',
-        phone: '',
-        email: '',
-        departmentId: null,
-        titleId: null
-      }
+      successful: false,
+      loading: false,
+      message: '',
+      schema
+    }
+  },
+  methods: {
+    submitForm (user) {
+      this.message = ''
+      this.successful = false
+      this.loading = false
+
+      this.$store.dispatch('auth/register', user).then(
+        (data) => {
+          this.message = data.message
+          this.successful = true
+          this.loading = false
+        },
+        (error) => {
+          this.message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString()
+          this.successful = false
+          this.loading = false
+        }
+      )
+    }
+  },
+  computed: {
+    loggedIn () {
+      return this.$store.state.auth.status.loggedIn
+    }
+  },
+  mounted () {
+    if (this.loggedIn) {
+      this.$router.push('/manager')
     }
   }
 }
@@ -82,6 +118,7 @@ export default {
 }
 
 .login-box {
+  position: relative;
   margin-top: 120px;
   background-color: #fff;
   border: 1px solid black;
@@ -89,14 +126,27 @@ export default {
   box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
 }
 
+.login-box-title {
+  position: absolute;
+  top: -55px;
+  left: calc(50% - 150px);
+  font-size: 40px;
+  font-weight: bold;
+  width: 300px;
+  text-align: center;
+}
+
 .login-form {
-  padding: 55px;
+  padding: 70px;
 }
 
 form div {
   display: flex;
   flex-direction: column;
-  padding: 15px 0;
+}
+
+form div:nth-child(2){
+  padding: 20px 0;
 }
 
 label {
@@ -144,5 +194,11 @@ button:hover {
   background-color: #fff;
   color: #111827;
   border: 3px solid #111827;
+}
+
+.error-message {
+  height: 25px;
+  margin-top: 10px;
+  font-weight: bold;
 }
 </style>

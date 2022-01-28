@@ -1,6 +1,5 @@
 <template>
-<!-- <Navbar/> -->
-<NavbarLogged/>
+<Navbar/>
 <div class="manager-container">
   <div class="search-container">
     <div class="input-wrapper">
@@ -83,15 +82,14 @@
 </template>
 
 <script>
-// import Navbar from '../components/Navbar.vue'
-import NavbarLogged from '../components/NavbarLogged.vue'
+import Navbar from '../components/Navbar.vue'
 import http from '../http-common.js'
+import authHeader from '../services/auth-header.js'
 
 export default {
   name: 'Manager',
   components: {
-    // Navbar
-    NavbarLogged
+    Navbar
   },
   data () {
     return {
@@ -104,7 +102,7 @@ export default {
   },
   methods: {
     async getEmployees () {
-      await http.get('/employee/all?page=' + this.currentPage + '&surname=' + this.searchSurname)
+      await http.get('/employee/all?page=' + this.currentPage + '&surname=' + this.searchSurname, { headers: authHeader() })
         .then((response) => {
           this.employeesPaginated = response.data
           console.log(response)

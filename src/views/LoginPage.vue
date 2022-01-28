@@ -2,20 +2,32 @@
 <Navbar/>
 <div class="login-container">
   <div class="login-box">
+    <div class="login-box-title">Log in</div>
     <div class="login-form">
-      <form @submit.prevent="submitForm">
+      <Form @submit="submitForm" :validation-schema="schema">
         <div>
-          <label for="login">Login</label>
-          <input type="text" id="login" v-model="formLogin.login"/>
+          <label for="username">Username</label>
+          <Field name="username" type="text"/>
+          <div class="error-message">
+            <ErrorMessage name="username"/>
+          </div>
         </div>
         <div>
           <label for="password">Password</label>
-          <input type="password" id="password" v-model="formLogin.password"/>
+          <Field name="password" type="password"/>
+          <div class="error-message">
+            <ErrorMessage name="password"/>
+          </div>
         </div>
         <div>
-          <button>Log in</button>
+          <button :disabled="loading">Log in</button>
         </div>
-      </form>
+        <div>
+          <div v-if="message" role="alert">
+            {{message}}
+          </div>
+        </div>
+      </Form>
     </div>
   </div>
 </div>
@@ -23,18 +35,56 @@
 
 <script>
 import Navbar from '../components/Navbar.vue'
+import { Form, Field, ErrorMessage } from 'vee-validate'
+import * as yup from 'yup'
 
 export default {
   name: 'LoginPage',
   components: {
-    Navbar
+    Navbar,
+    Form,
+    Field,
+    ErrorMessage
   },
   data () {
+    const schema = yup.object().shape({
+      username: yup.string().required('Username is required!'),
+      password: yup.string().required('Password is required!')
+    })
+
     return {
-      formLogin: {
-        login: '',
-        password: ''
-      }
+      loading: false,
+      message: '',
+      schema
+    }
+  },
+  methods: {
+    submitForm (user) {
+      this.loading = true
+      this.$store.dispatch('auth/login', user).then(
+        () => {
+          this.$router.push('/manager')
+        },
+        (error) => {
+          this.loading = false
+          this.message =
+            (error.response &&
+              error.response.data &&
+              error.response.data.message) ||
+            error.message ||
+            error.toString()
+        }
+      )
+    }
+  },
+  computed: {
+    loggedIn () {
+      return this.$store.state.auth.status.loggedIn
+    }
+  },
+  created () {
+    if (this.loggedIn) {
+      this.$router.push('/manager')
     }
   }
 }
@@ -51,11 +101,22 @@ export default {
 }
 
 .login-box {
+  position: relative;
   margin-top: 120px;
   background-color: #fff;
   border: 1px solid black;
   border-radius: 7px;
   box-shadow: #121212 0 0 0 3px, transparent 0 0 0 0;
+}
+
+.login-box-title {
+  position: absolute;
+  top: -55px;
+  left: calc(50% - 150px);
+  font-size: 40px;
+  font-weight: bold;
+  width: 300px;
+  text-align: center;
 }
 
 .login-form {
@@ -68,7 +129,7 @@ form div {
 }
 
 form div:nth-child(2){
-  padding: 30px 0;
+  padding: 20px 0;
 }
 
 label {
@@ -108,5 +169,11 @@ button:hover {
   background-color: #fff;
   color: #111827;
   border: 3px solid #111827;
+}
+
+.error-message {
+  height: 25px;
+  margin-top: 10px;
+  font-weight: bold;
 }
 </style>

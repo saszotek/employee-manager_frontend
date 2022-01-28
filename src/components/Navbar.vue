@@ -5,16 +5,13 @@
     </div>
     <div class="nav-right">
         <div class="nav-link">
-            <router-link to="/">Home</router-link>
-        </div>
-        <div class="nav-link">
             <router-link to="/manager">Manage</router-link>
         </div>
-        <div class="nav-link">
-            <router-link to="/login">Log In</router-link>
+        <div class="nav-link" v-if="isLogged">
+            <router-link to="/details">{{currentUser.username}} {{currentUser.accessToken.substring(0, 20)}} ... {{currentUser.accessToken.substr(currentUser.accessToken.length - 20)}}</router-link>
         </div>
-        <div class="nav-link">
-            <router-link to="/signup">Sign Up</router-link>
+        <div class="nav-link" v-if="isLogged">
+            <router-link to="/" @click.prevent="logout">Logout</router-link>
         </div>
     </div>
 </nav>
@@ -22,7 +19,38 @@
 
 <script>
 export default {
-  name: 'Navbar'
+  name: 'Navbar',
+  data () {
+    return {
+      isLogged: false,
+      currentRouterName: ''
+    }
+  },
+  methods: {
+    logout () {
+      this.$store.dispatch('auth/logout')
+    }
+  },
+  computed: {
+    currentUser () {
+      return this.$store.state.auth.user
+    },
+    currentRouteName () {
+      return this.$route.name
+    }
+  },
+  mounted () {
+    if (!this.currentUser) {
+      this.currentRouterName = this.currentRouteName
+      if (this.currentRouterName === 'SignupPage') {
+        this.$router.push('/signup')
+      } else {
+        this.$router.push('/login')
+      }
+    }
+
+    this.isLogged = this.$store.state.auth.status.loggedIn
+  }
 }
 </script>
 
