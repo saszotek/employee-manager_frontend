@@ -5,6 +5,7 @@ const LoginPage = () => import('../views/LoginPage.vue')
 const SignupPage = () => import('../views/SignupPage.vue')
 const Details = () => import('../views/Details.vue')
 const Edit = () => import('../views/Edit.vue')
+const SignupPageFollowUp = () => import('../views/SignupPageFollowUp.vue')
 
 const routes = [
   {
@@ -36,6 +37,11 @@ const routes = [
     path: '/edit/:id',
     name: 'Edit',
     component: Edit
+  },
+  {
+    path: '/signupparttwo',
+    name: 'SignupPageFollowUp',
+    component: SignupPageFollowUp
   }
 ]
 

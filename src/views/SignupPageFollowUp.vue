@@ -8,17 +8,11 @@
                     <div>
                         <button><span>Save</span></button>
                     </div>
-                    <div>
-                        <router-link to="/manager"><span>Back</span></router-link>
-                    </div>
-                    <div>
-                        <button @click="deleteEmployee(); goManagerPage()"><span>Delete</span></button>
-                    </div>
                 </div>
             </div>
             <div class="details-inside-wrapping">
                 <div class="details-title">
-                    <p>{{employee.name}} {{employee.surname}}</p>
+                    <p>Complete your personal details</p>
                 </div>
                 <div class="details-info-wrapping">
                     <div class="details-info-left">
@@ -83,7 +77,7 @@ import Navbar from '../components/Navbar.vue'
 import http from '../http-common.js'
 
 export default {
-  name: 'Edit',
+  name: 'SignupPageFollowUp',
   components: {
     Navbar
   },
@@ -106,16 +100,6 @@ export default {
     }
   },
   methods: {
-    async deleteEmployee () {
-      await http.delete('/employee/delete/' + this.id)
-        .then((response) => {
-          console.log(response)
-          location.reload()
-        })
-        .catch((error) => {
-          console.log(error)
-        })
-    },
     async getEmployee () {
       await http.get('/employee/find/' + this.id)
         .then((response) => {
@@ -147,26 +131,12 @@ export default {
     goManagerPage () {
       this.$router.push('/manager')
     },
-    setDefaultValues () {
-      this.departmentId = this.employee.department.name
-      this.titleId = this.employee.title.name
-      this.formEdit.name = this.employee.name
-      this.formEdit.surname = this.employee.surname
-      this.formEdit.email = this.employee.email
-      this.formEdit.phone = this.employee.phone
-      this.formEdit.login = this.employee.login
-      this.formEdit.password = this.employee.password
-      this.departmentIdOld = this.employee.department.id
-      this.titleIdOld = this.employee.title.id
-    },
     async submitForm () {
-      await http.put('/employee/update/' + this.id, this.formEdit)
+      await http.put('/employee/update/' + this.currentUser.id, this.formEdit)
       this.setDepartment()
-      await http.delete('/department/delete/' + this.departmentIdOld + '/employee/' + this.id)
       this.setTitle()
-      await http.delete('/title/delete/' + this.titleIdOld + '/employee/' + this.id)
-      await http.post('/department/add/' + this.departmentId + '/employee/' + this.id)
-      await http.post('/title/add/' + this.titleId + '/employee/' + this.id)
+      await http.post('/department/add/' + this.departmentId + '/employee/' + this.currentUser.id)
+      await http.post('/title/add/' + this.titleId + '/employee/' + this.currentUser.id)
       this.goManagerPage()
     },
     setDepartment () {
@@ -189,9 +159,6 @@ export default {
     this.getEmployee()
     this.getDepartments()
     this.getTitles()
-  },
-  mounted () {
-    this.setDefaultValues()
   },
   computed: {
     currentUser () {
@@ -287,7 +254,7 @@ export default {
 
 .buttons-wrapping {
     position: absolute;
-    top: calc(60% + 20px);
+    top: calc(70% + 20px);
     left: calc(100% - 65px);
 }
 

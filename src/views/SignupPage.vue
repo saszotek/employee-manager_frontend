@@ -21,10 +21,21 @@
             </div>
           </div>
           <div>
+            <label for="role">Role</label>
+            <Field name="role" as="select">
+              <option value="user">User</option>
+              <option value="mod">Moderator</option>
+              <option value="admin">Admin</option>
+            </Field>
+            <div class="error-message">
+              <ErrorMessage name="role"/>
+            </div>
+          </div>
+          <div>
             <button :disabled="loading">Sign up</button>
           </div>
         </div>
-        <div>
+        <div class="message-wrapper">
           <div v-if="message" class="message">
             {{message}}
           </div>
@@ -75,11 +86,16 @@ export default {
       this.successful = false
       this.loading = false
 
+      if (user.role === 'admin') user.role = ['admin', 'mod', 'user']
+      if (user.role === 'mod') user.role = ['mod', 'user']
+      if (user.role === 'user') user.role = ['user']
+
       this.$store.dispatch('auth/register', user).then(
         (data) => {
           this.message = data.message
           this.successful = true
           this.loading = false
+          this.$router.push({ name: 'LoginPage', params: { fromRegistrationPage: true } })
         },
         (error) => {
           this.message =
@@ -200,5 +216,16 @@ button:hover {
   height: 25px;
   margin-top: 10px;
   font-weight: bold;
+}
+
+.message-wrapper {
+  font-weight: bold;
+  text-align: center;
+  margin-top: 10px;
+  height: 25px;
+}
+
+form {
+  width: 290px;
 }
 </style>

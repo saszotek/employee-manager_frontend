@@ -4,13 +4,16 @@
         <h2>Employee Manager</h2>
     </div>
     <div class="nav-right">
+        <div class="nav-link" v-if="!$store.state.auth.status.loggedIn">
+            <router-link to="/">Home</router-link>
+        </div>
         <div class="nav-link">
             <router-link to="/manager">Manage</router-link>
         </div>
-        <div class="nav-link" v-if="isLogged">
-            <router-link to="/details">{{currentUser.username}} {{currentUser.accessToken.substring(0, 20)}} ... {{currentUser.accessToken.substr(currentUser.accessToken.length - 20)}}</router-link>
+        <div class="nav-link" v-if="$store.state.auth.status.loggedIn">
+            <router-link :to="{name: 'Details', params: {id: currentUser.id}}">{{currentUser.username}}</router-link>
         </div>
-        <div class="nav-link" v-if="isLogged">
+        <div class="nav-link" v-if="$store.state.auth.status.loggedIn">
             <router-link to="/" @click.prevent="logout">Logout</router-link>
         </div>
     </div>
@@ -22,7 +25,6 @@ export default {
   name: 'Navbar',
   data () {
     return {
-      isLogged: false,
       currentRouterName: ''
     }
   },
@@ -48,8 +50,6 @@ export default {
         this.$router.push('/login')
       }
     }
-
-    this.isLogged = this.$store.state.auth.status.loggedIn
   }
 }
 </script>

@@ -22,7 +22,7 @@
         <div>
           <button :disabled="loading">Log in</button>
         </div>
-        <div>
+        <div class="message-wrapper">
           <div v-if="message" role="alert">
             {{message}}
           </div>
@@ -53,6 +53,7 @@ export default {
     })
 
     return {
+      fromRegistrationPage: null,
       loading: false,
       message: '',
       schema
@@ -63,7 +64,11 @@ export default {
       this.loading = true
       this.$store.dispatch('auth/login', user).then(
         () => {
-          this.$router.push('/manager')
+          if (this.fromRegistrationPage === true) {
+            this.$router.push('/signupparttwo')
+          } else {
+            this.$router.push('/manager')
+          }
         },
         (error) => {
           this.loading = false
@@ -86,6 +91,8 @@ export default {
     if (this.loggedIn) {
       this.$router.push('/manager')
     }
+
+    this.fromRegistrationPage = this.$route.params
   }
 }
 </script>
@@ -175,5 +182,16 @@ button:hover {
   height: 25px;
   margin-top: 10px;
   font-weight: bold;
+}
+
+.message-wrapper {
+  font-weight: bold;
+  text-align: center;
+  margin-top: 20px;
+  height: 35px;
+}
+
+form {
+  width: 290px;
 }
 </style>
