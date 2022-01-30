@@ -20,14 +20,20 @@
                             <div class="info-label"><label for="name">Name</label></div>
                             <div class="input-wrapping">
                                 <div class="half-border"></div>
-                                <input type="text" id="name" v-model="formEdit.name"/>
+                                <input type="text" id="name" v-model="formEdit.name" @blur="validate('name')" @keypress="validate('name')"/>
+                            </div>
+                            <div class="error-message-under">
+                              <p v-if="!!errors.name">{{errors.name}}</p>
                             </div>
                         </div>
                         <div class="label-wrapping">
                             <div class="info-label"><label for="email">Email</label></div>
                             <div class="input-wrapping">
                                 <div class="half-border"></div>
-                                <input type="text" id="email" v-model="formEdit.email"/>
+                                <input type="text" id="email" v-model="formEdit.email" @blur="validate('email')" @keypress="validate('email')"/>
+                            </div>
+                            <div class="error-message-under">
+                              <p v-if="!!errors.email">{{errors.email}}</p>
                             </div>
                         </div>
                         <div class="label-wrapping">
@@ -54,14 +60,20 @@
                             <div class="info-label"><label for="surname">Surname</label></div>
                             <div class="input-wrapping">
                                 <div class="half-border"></div>
-                                <input type="text" id="surname" v-model="formEdit.surname"/>
+                                <input type="text" id="surname" v-model="formEdit.surname" @blur="validate('surname')" @keypress="validate('surname')"/>
+                            </div>
+                            <div class="error-message-under">
+                              <p v-if="!!errors.surname">{{errors.surname}}</p>
                             </div>
                         </div>
                         <div class="label-wrapping">
                             <div class="info-label"><label for="phone">Phone</label></div>
                             <div class="input-wrapping">
                                 <div class="half-border"></div>
-                                <input type="text" id="phone" v-model="formEdit.phone"/>
+                                <input type="text" id="phone" v-model="formEdit.phone" @blur="validate('phone')" @keypress="validate('phone')"/>
+                            </div>
+                            <div class="error-message-under">
+                              <p v-if="!!errors.phone">{{errors.phone}}</p>
                             </div>
                         </div>
                     </div>
@@ -75,6 +87,28 @@
 <script>
 import Navbar from '../components/Navbar.vue'
 import http from '../http-common.js'
+import * as yup from 'yup'
+
+const formEditSchema = yup.object().shape({
+  name: yup
+    .string()
+    .required('Name is required!')
+    .min(3, 'Must be at least 3 chacaters!')
+    .max(20, 'Must be maximum 20 characters!'),
+  email: yup
+    .string()
+    .required('Email is required!')
+    .min(3, 'Must be at least 3 chacaters!')
+    .max(20, 'Must be maximum 20 characters!'),
+  surname: yup
+    .string()
+    .required('Surname is required!')
+    .min(3, 'Must be at least 3 chacaters!')
+    .max(20, 'Must be maximum 20 characters!'),
+  phone: yup
+    .string()
+    .matches(new RegExp('[0-9]{9}'), 'Phone number is not valid!')
+})
 
 export default {
   name: 'SignupPageFollowUp',
@@ -93,13 +127,27 @@ export default {
         phone: '',
         surname: ''
       },
+      errors: {
+        name: '',
+        email: '',
+        phone: '',
+        surname: ''
+      },
       departmentId: null,
       titleId: null,
       departmentIdOld: null,
-      titleIdOld: null
+      titleIdOld: null,
+      isValidationOK: null
     }
   },
   methods: {
+    validate (field) {
+      formEditSchema.validateAt(field, this.formEdit)
+        .then(() => (this.errors[field] = ''))
+        .catch((error) => {
+          this.errors[error.path] = error.message
+        })
+    },
     async getEmployee () {
       await http.get('/employee/find/' + this.id)
         .then((response) => {
@@ -132,6 +180,17 @@ export default {
       this.$router.push('/manager')
     },
     async submitForm () {
+      formEditSchema.validate(this.formEdit, { abortEarly: false })
+        .then(() => {
+          this.isValidationOK = true
+          this.submitRequestOKEY()
+        })
+        .catch((err) => {
+          this.isValidationOK = false
+          console.log(err)
+        })
+    },
+    async submitRequestOKEY () {
       await http.put('/employee/update/' + this.currentUser.id, this.formEdit)
       this.setDepartment()
       this.setTitle()
@@ -169,6 +228,13 @@ export default {
 </script>
 
 <style scoped>
+.error-message-under {
+  margin-top: 10px;
+  height: 20px;
+  margin-left: 7px;
+  font-weight: bold;
+}
+
 .details-container {
     display: flex;
     justify-content: center;
