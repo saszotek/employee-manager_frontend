@@ -95,7 +95,7 @@ export default {
           this.message = data.message
           this.successful = true
           this.loading = false
-          this.$router.push({ name: 'LoginPage', params: { fromRegistrationPage: true } })
+          this.$router.push({ name: 'LoginPage', params: { data: true } })
         },
         (error) => {
           this.message =

@@ -2,7 +2,7 @@
 <Navbar/>
 <div class="login-container">
   <div class="login-box">
-    <div class="login-box-title">Log in</div>
+    <div class="login-box-title">Log in {{fromRegistrationPage}}</div>
     <div class="login-form">
       <Form @submit="submitForm" :validation-schema="schema">
         <div>
@@ -64,8 +64,8 @@ export default {
       this.loading = true
       this.$store.dispatch('auth/login', user).then(
         () => {
-          if (this.fromRegistrationPage === true) {
-            this.$router.push('/signupparttwo')
+          if (this.fromRegistrationPage) {
+            this.$router.push('/signup/form')
           } else {
             this.$router.push('/manager')
           }
@@ -92,7 +92,7 @@ export default {
       this.$router.push('/manager')
     }
 
-    this.fromRegistrationPage = this.$route.params
+    this.fromRegistrationPage = this.$route.params.data
   }
 }
 </script>

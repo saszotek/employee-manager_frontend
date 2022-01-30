@@ -11,7 +11,7 @@
                     <div>
                         <router-link to="/manager"><span>Back</span></router-link>
                     </div>
-                    <div>
+                    <div v-if="showDeleteButton">
                         <button @click="deleteEmployee(); goManagerPage()"><span>Delete</span></button>
                     </div>
                 </div>
@@ -196,6 +196,12 @@ export default {
   computed: {
     currentUser () {
       return this.$store.state.auth.user
+    },
+    showDeleteButton () {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_ADMIN')
+      }
+      return false
     }
   }
 }

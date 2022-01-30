@@ -42,7 +42,7 @@
               Job Title
             </div>
           </div>
-          <div class="record-buttons"></div>
+          <div :class="(showDetailsAndEditButton === false) ? 'record-buttons-user' : 'record-buttons'"></div>
         </div>
         <div class="record" v-for="employee in employees" :key="employee.id">
           <div class="border-half"></div>
@@ -63,14 +63,14 @@
               {{employee.title.name}}
             </div>
           </div>
-          <div class="record-buttons">
+          <div :class="(showDetailsAndEditButton === false) ? 'record-buttons-user' : 'record-buttons'" v-if="showDetailsAndEditButton">
             <div>
               <router-link :to="{name: 'Details', params: {id: employee.id}}"><span>Details</span></router-link>
             </div>
             <div>
               <router-link :to="{name: 'Edit', params: {id: employee.id}}"><span>Edit</span></router-link>
             </div>
-            <div>
+            <div v-if="showDeleteButton">
               <button @click="deleteEmployee(employee.id)"><span>Delete</span></button>
             </div>
           </div>
@@ -142,6 +142,23 @@ export default {
   },
   created () {
     this.getEmployees()
+  },
+  computed: {
+    currentUser () {
+      return this.$store.state.auth.user
+    },
+    showDetailsAndEditButton () {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_MODERATOR')
+      }
+      return false
+    },
+    showDeleteButton () {
+      if (this.currentUser && this.currentUser.roles) {
+        return this.currentUser.roles.includes('ROLE_ADMIN')
+      }
+      return false
+    }
   }
 }
 </script>
@@ -211,15 +228,8 @@ export default {
   align-items: center;
 }
 
-.record-info {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .record-info div {
   padding: 0 5px 0 5px;
-  /* border-right: 1px solid #000; */
   text-align: center;
   width: 250px;
 }
@@ -233,6 +243,10 @@ export default {
 
 .record-buttons div {
   padding: 0 10px 0 10px;
+}
+
+.record-buttons-user {
+  width: 0;
 }
 
 .record-main {

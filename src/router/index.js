@@ -39,7 +39,7 @@ const routes = [
     component: Edit
   },
   {
-    path: '/signupparttwo',
+    path: '/signup/form',
     name: 'SignupPageFollowUp',
     component: SignupPageFollowUp
   }
