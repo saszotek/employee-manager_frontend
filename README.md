@@ -1,25 +1,18 @@
-# EmployeeManager_VueJS_frontend
-College project built in Spring Boot
+# Employee Manager - Frontend
 
-## Project setup
-```
-npm install
-```
+**This repository is frontend part of Employee Manager application.**
+Employee Manager lets you manage employees by adding, deleting, updating. Application allows you to register a new user or log in using an existing account. New users are added via registration page. Every account is assigned to a specific role:
+- Admin - delete, update, view employee details,
+- Moderator - update, view employee details,
+- User - view employee details.
 
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
+## Live version
 
-### Compiles and minifies for production
-```
-npm run build
-```
+**Live demo:** *offline*
 
-### Lints and fixes files
-```
-npm run lint
-```
+## Technologies
 
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+- Vue
+- Vue Router
+- Axios
+- CSS
