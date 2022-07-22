@@ -1,7 +1,7 @@
 # Employee Manager - Frontend
 
 **This repository is frontend part of Employee Manager application.**\
-Frontend part of Employee Manager application. It is integrated with [employee-manager_backend](https://github.com/saszotek/employee-manager_backend) repository. Application allows you to create a new account using register page or log in with an existing account. After logging in, user can manage registered employees. Access to management functions is based on assigned role of that account:
+Frontend part of Employee Manager application is integrated with [employee-manager_backend](https://github.com/saszotek/employee-manager_backend) repository. Application allows you to create a new account using register page or log in with an existing one. After logging in, user can manage registered employees. Access to management functions is based on assigned role of that account:
 - Admin - delete, update, view employee details,
 - Moderator - update, view employee details,
 - User - view employee details.
