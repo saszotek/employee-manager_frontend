@@ -1,6 +1,6 @@
 # Employee Manager - Frontend
 
-**This repository is frontend part of Employee Manager application.**
+**This repository is frontend part of Employee Manager application.**\
 Employee Manager lets you manage employees by adding, deleting, updating. Application allows you to register a new user or log in using an existing account. New users are added via registration page. Every account is assigned to a specific role:
 - Admin - delete, update, view employee details,
 - Moderator - update, view employee details,
